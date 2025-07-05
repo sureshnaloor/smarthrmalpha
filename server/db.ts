@@ -16,24 +16,13 @@ if (!process.env.DATABASE_URL) {
 
 // Configure SSL based on environment
 let sslConfig;
-try {
-  if (process.env.NODE_ENV === 'production') {
-    const certPath = path.join(process.cwd(), 'rds-ca-2019-root.pem');
-    console.log('Certificate path:', certPath);
-    console.log('Certificate exists:', fs.existsSync(certPath));
-    
-    sslConfig = {
-      rejectUnauthorized: true,
-      ca: fs.readFileSync(certPath).toString(),
-    };
-  } else {
-    sslConfig = {
-      rejectUnauthorized: false,
-    };
-  }
-} catch (error) {
-  console.error('SSL configuration error:', error);
-  // Fallback to basic SSL
+if (process.env.NODE_ENV === 'production') {
+  // For AWS Lightsail RDS, use basic SSL without certificate verification
+  sslConfig = {
+    rejectUnauthorized: false,
+  };
+  console.log('Using production SSL configuration with rejectUnauthorized: false');
+} else {
   sslConfig = {
     rejectUnauthorized: false,
   };
@@ -42,8 +31,8 @@ try {
 // Parse connection string and add SSL parameters
 const connectionString = process.env.DATABASE_URL;
 const sslConnectionString = connectionString.includes('?') 
-  ? `${connectionString}&sslmode=require`
-  : `${connectionString}?sslmode=require`;
+  ? `${connectionString}&sslmode=prefer`
+  : `${connectionString}?sslmode=prefer`;
 
 export const pool = new Pool({ 
   connectionString: sslConnectionString,
