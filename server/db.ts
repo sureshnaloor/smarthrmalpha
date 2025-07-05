@@ -14,14 +14,14 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-// AWS Lightsail RDS requires SSL but with relaxed verification
-console.log('Using SSL with rejectUnauthorized: false for AWS Lightsail RDS');
+// AWS Lightsail RDS SSL configuration with proper certificate
+console.log('Using SSL with RDS certificate for AWS Lightsail RDS');
 
 export const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false,
-    checkServerIdentity: () => undefined, // Skip hostname verification
+    rejectUnauthorized: true,
+    ca: fs.readFileSync(path.join(process.cwd(), 'rds-ca-2019-root.pem')).toString(),
   },
 });
 export const db = drizzle(pool, { schema });
