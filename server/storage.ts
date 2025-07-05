@@ -321,6 +321,19 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return updatedRequest;
   }
+//  to implement this method, you would typically query your database to find the time off request by its ID.
+  /**
+//  * Get a time off request by its ID.
+//  * @param id The ID of the time off request.
+//  * @returns The time off request object or null if not found.
+//  */
+// async getTimeOffRequestById(id: number) {
+//   // Replace with your actual database logic
+//   const result = await db.timeOffRequests.findUnique({
+//     where: { id },
+//   });
+//   return result;
+// }
   
   // Notification operations
   async getNotificationsByEmployee(employeeId: number): Promise<Notification[]> {
