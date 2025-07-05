@@ -8,7 +8,9 @@ const app = express();
 
 // Add CORS configuration
 app.use(cors({
-  origin: 'http://localhost:5173', // Your Vite dev server
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['http://146.190.206.156:8080', 'http://localhost:8080'] 
+    : 'http://localhost:5173',
   credentials: true, // This is important for cookies/sessions
 }));
 
@@ -60,9 +62,14 @@ app.use((req, res, next) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
+  const env = process.env.NODE_ENV || app.get("env");
+  log(`Environment: ${env}`);
+  
+  if (env === "development") {
+    log("Setting up Vite development server");
     await setupVite(app, server);
   } else {
+    log("Setting up static file serving for production");
     serveStatic(app);
   }
 
