@@ -12,9 +12,6 @@ export default defineConfig({
   dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: true,
-      ca: fs.readFileSync(path.join(process.cwd(), 'rds-ca-2019-root.pem')).toString(),
-    },
+    ssl: false,
   },
 });
