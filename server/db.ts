@@ -14,11 +14,14 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-// For now, disable SSL completely to test connection
-console.log('Using SSL: false for database connection');
+// AWS Lightsail RDS requires SSL but with relaxed verification
+console.log('Using SSL with rejectUnauthorized: false for AWS Lightsail RDS');
 
 export const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
-  ssl: false,
+  ssl: {
+    rejectUnauthorized: false,
+    checkServerIdentity: () => undefined, // Skip hostname verification
+  },
 });
 export const db = drizzle(pool, { schema });
