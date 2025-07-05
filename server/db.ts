@@ -14,28 +14,11 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-// Configure SSL based on environment
-let sslConfig;
-if (process.env.NODE_ENV === 'production') {
-  // For AWS Lightsail RDS, use basic SSL without certificate verification
-  sslConfig = {
-    rejectUnauthorized: false,
-  };
-  console.log('Using production SSL configuration with rejectUnauthorized: false');
-} else {
-  sslConfig = {
-    rejectUnauthorized: false,
-  };
-}
-
-// Parse connection string and add SSL parameters
-const connectionString = process.env.DATABASE_URL;
-const sslConnectionString = connectionString.includes('?') 
-  ? `${connectionString}&sslmode=prefer`
-  : `${connectionString}?sslmode=prefer`;
+// For now, disable SSL completely to test connection
+console.log('Using SSL: false for database connection');
 
 export const pool = new Pool({ 
-  connectionString: sslConnectionString,
-  ssl: sslConfig,
+  connectionString: process.env.DATABASE_URL,
+  ssl: false,
 });
 export const db = drizzle(pool, { schema });
